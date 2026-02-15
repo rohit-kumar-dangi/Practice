@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login - NeoCampus</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Audiowide&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box;}
+
+    body {
+      background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
+      color:#fff;
+      font-family:'Orbitron',sans-serif;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 100%;
+      max-width: 450px;
+      padding: 40px;
+      box-shadow: 0 0 25px rgba(0,255,255,0.1);
+      position:relative;
+    }
+
+    .logo {
+      text-align:center;
+      margin-bottom:30px;
+    }
+
+    .logo-icon {
+      font-size:3rem;
+      background: linear-gradient(90deg,#00ffff,#ff00cc);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:10px;
+    }
+
+    .logo h1 {
+      font-family:'Audiowide',cursive;
+      font-size:2rem;
+      background: linear-gradient(90deg,#ff00cc,#00ffff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:5px;
+    }
+
+    .logo p {
+      color: rgba(255,255,255,0.6);
+      margin-bottom:15px;
+    }
+
+    .error-message,
+    .success-message {
+      padding:12px;
+      border-radius:8px;
+      margin-bottom:20px;
+      text-align:center;
+      display:none;
+    }
+    .error-message {
+      background: rgba(231, 76, 60, 0.2);
+      color:#e74c3c;
+    }
+    .success-message {
+      background: rgba(46, 204, 113, 0.2);
+      color:#2ecc71;
+    }
+
+    .form-group {
+      margin-bottom:20px;
+      text-align:left;
+    }
+    .form-group label {
+      display:block;
+      margin-bottom:8px;
+      color:#00ffff;
+      font-size:0.9rem;
+    }
+
+    .input-with-icon {
+      position:relative;
+    }
+    .input-with-icon i {
+      position:absolute;
+      left:15px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#00ffff;
+    }
+    .input-with-icon input {
+      width:100%;
+      padding:14px 14px 14px 45px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.08);
+      color:white;
+      font-size:1rem;
+      transition:all 0.3s ease;
+    }
+    .input-with-icon input:focus {
+      outline:none;
+      border-color:#00ffff;
+      box-shadow:0 0 0 3px rgba(0,255,255,0.2);
+    }
+    .input-with-icon input::placeholder {
+      color:rgba(255,255,255,0.5);
+    }
+
+    .forgot-password {
+      text-align:right;
+      margin-bottom:20px;
+    }
+    .forgot-password a {
+      color:#00ffff;
+      text-decoration:none;
+      font-size:0.9rem;
+    }
+    .forgot-password a:hover {
+      text-decoration:underline;
+      color:#ff00cc;
+    }
+
+    .login-btn {
+      width:100%;
+      padding:14px;
+      background: linear-gradient(90deg,#00ffff,#ff00cc);
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      font-size:1.1rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+      box-shadow:0 0 20px rgba(0,255,255,0.4);
+    }
+    .login-btn:hover {
+      transform:translateY(-3px);
+      box-shadow:0 0 30px rgba(255,0,204,0.6);
+    }
+
+    .divider {
+      display:flex;
+      align-items:center;
+      margin:30px 0;
+      color:rgba(255,255,255,0.5);
+    }
+    .divider::before,
+    .divider::after {
+      content:'';
+      flex:1;
+      height:1px;
+      background:rgba(255,255,255,0.2);
+    }
+    .divider span {
+      padding:0 15px;
+      font-size:0.9rem;
+    }
+
+    .modal {
+      display:none;
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.7);
+      backdrop-filter:blur(5px);
+      z-index:1000;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .modal-content {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,0.1);
+      width:90%;
+      max-width:450px;
+      padding:30px;
+      box-shadow:0 0 25px rgba(0,255,255,0.1);
+      position:relative;
+    }
+    .close-modal {
+      position:absolute;
+      top:20px;right:20px;
+      background:none;
+      border:none;
+      color:rgba(255,255,255,0.7);
+      font-size:1.5rem;
+      cursor:pointer;
+    }
+    .close-modal:hover {
+      color:#00ffff;
+    }
+
+    @media (max-width:480px){
+      .login-card{padding:30px 20px;}
+      .logo h1{font-size:1.8rem;}
+    }
+  </style>
+</head>
+<body>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <script>
+        alert("{{ messages[0] }}");
+    </script>
+  {% endif %}
+  {% endwith %}
+
+
+  <div class="login-card">
+    <div class="logo">
+      <div class="logo-icon"><i class="fas fa-user-graduate"></i></div>
+      <h1>Smart Attendance</h1>
+      <p>Student Login </p>
+    </div>
+
+    <div class="error-message" id="errorMessage">
+      <i class="fas fa-exclamation-circle"></i> Incorrect email/enrollment or password.
+    </div>
+
+    <div class="success-message" id="successMessage">
+      <i class="fas fa-check-circle"></i> Login successful! Redirecting...
+    </div>
+
+    <form id="loginForm" method="POST" action="/student_login">
+      <div class="form-group">
+        <label for="username">Enrollment Number</label>
+        <div class="input-with-icon">
+       
+          <input type="text" id="username" name="username" placeholder="Enter  enrollment number" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-with-icon">
+         
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+      </div>
+
+      <div class="forgot-password">
+        <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Login </button>
+    </form>
+
+   
+  </div>
+
+  <!-- Forgot Password Modal
+  <div class="modal" id="forgotPasswordModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeModal">&times;</button>
+      <h2 style="text-align:center;color:#00ffff;margin-bottom:15px;">Reset Your Password</h2>
+      <p style="text-align:center;margin-bottom:20px;">Enter your email address and we'll send you a link to reset your password.</p>
+
+      <div class="form-group">
+        <label for="resetEmail">Email Address</label>
+        <div class="input-with-icon">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="resetEmail" placeholder="Enter your registered email" required>
+        </div>
+      </div>
+
+      <button class="login-btn" style="margin-top:10px;">Send Reset Link</button>
+    </div>
+  </div> -->
+
+  <script>
+    // Forgot password modal toggle
+    document.getElementById('forgotPasswordLink').addEventListener('click', function(e){
+      e.preventDefault();
+      document.getElementById('forgotPasswordModal').style.display='flex';
+    });
+    document.getElementById('closeModal').addEventListener('click', function(){
+      document.getElementById('forgotPasswordModal').style.display='none';
+    });
+    window.addEventListener('click', function(e){
+      if (e.target === document.getElementById('forgotPasswordModal')) {
+        document.getElementById('forgotPasswordModal').style.display='none';
+      }
+    });
+
+    function showError(message){
+      const eMsg=document.getElementById('errorMessage');
+      eMsg.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${message}`;
+      eMsg.style.display='block';
+      document.getElementById('successMessage').style.display='none';
+    }
+    function showSuccess(message){
+      const sMsg=document.getElementById('successMessage');
+      sMsg.innerHTML=`<i class="fas fa-check-circle"></i> ${message}`;
+      sMsg.style.display='block';
+      document.getElementById('errorMessage').style.display='none';
+    }
+  </script>
+</body>
+</html>

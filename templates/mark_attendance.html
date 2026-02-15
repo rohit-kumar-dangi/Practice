@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Portal - CampusConnect</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --primary:#4776E6;
+    --secondary:#8E54E9;
+    --accent:#00ffff;
+    --accent-light:#ff00cc;
+    --light:#ffffff;
+    --dark:#1a1a2e;
+    --glass:rgba(255,255,255,0.05);
+    --glass-border:rgba(255,255,255,0.1);
+    --shadow:0 10px 25px rgba(0,255,255,0.1);
+    --success:#2ecc71;
+    --danger:#e74c3c;
+    --warning:#f39c12;
+    --gradient:linear-gradient(135deg,var(--primary),var(--secondary));
+  }
+  body{
+    font-family:'Montserrat',sans-serif;
+    background:radial-gradient(circle at top left,#0f0c29,#302b63,#24243e);
+    color:var(--light);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .container{ max-width:1400px; margin:0 auto; padding:0 20px; }
+
+  /* Header */
+  header{
+    padding:20px 0;
+    background:var(--glass);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--glass-border);
+    position:sticky;top:0;z-index:1000;
+  }
+  .navbar{display:flex;justify-content:space-between;align-items:center;}
+  .logo{display:flex;align-items:center;gap:10px;font-size:1.8rem;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .logo i{font-size:2rem;}
+  .user-menu{display:flex;align-items:center;gap:20px;}
+  .user-info{text-align:right;}
+  .user-name{font-weight:700;font-size:1.1rem;}
+  .user-role{font-size:0.9rem;color:var(--accent);}
+  .user-avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(90deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.2rem;color:#fff;}
+  .user-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+  /* Layout */
+  .main-content{display:grid;grid-template-columns:300px 1fr;gap:30px;padding:40px 0;}
+  .sidebar{background:var(--glass);backdrop-filter:blur(12px);border-radius:20px;border:1px solid var(--glass-border);padding:25px;height:fit-content;}
+  .sidebar-menu{list-style:none;}
+  .sidebar-menu li{margin-bottom:10px;}
+  .sidebar-menu a{display:flex;align-items:center;gap:15px;padding:12px 15px;border-radius:12px;color:#fff;text-decoration:none;transition:0.3s;font-weight:500;}
+  .sidebar-menu a:hover,.sidebar-menu a.active{background:rgba(255,255,255,0.1);}
+  .sidebar-menu i{width:25px;text-align:center;color:var(--accent);}
+
+  .dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;}
+  .card{background:var(--glass);backdrop-filter:blur(12px);border-radius:20px;border:1px solid var(--glass-border);padding:25px;box-shadow:var(--shadow);}
+  .card-full{grid-column:1/-1;}
+  .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid var(--glass-border);padding-bottom:10px;}
+  .card-title{font-size:1.4rem;font-weight:700;color:var(--accent);}
+
+  /* Attendance */
+  .attendance-wrapper{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;}
+  .attendance-card{flex:1;min-width:300px;}
+  .scanner-container{text-align:center;padding:20px;}
+  .scanner-container p{margin-bottom:15px;font-size:1rem;}
+  #reader{margin:0 auto;border:2px dashed var(--accent);border-radius:15px;}
+  .scanner-placeholder{width:220px;height:220px;margin:20px auto;border:3px dashed var(--accent);border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;color:var(--accent);}
+  .scanner-btn,#qrUploadForm button{
+    background:var(--gradient);
+    color:#fff;
+    border:none;
+    padding:12px 25px;
+    border-radius:50px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+    margin-top:15px;
+    box-shadow:0 10px 20px rgba(71,118,230,0.3);
+  }
+  .scanner-btn:hover,#qrUploadForm button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 30px rgba(71,118,230,0.4);
+  }
+
+  /* Responsive */
+  @media(max-width:1024px){.dashboard{grid-template-columns:1fr;}}
+  @media(max-width:768px){
+    .main-content{grid-template-columns:1fr;}
+    .sidebar{order:2;}
+    .dashboard{order:1;}
+    .navbar{flex-direction:column;gap:15px;}
+    .user-menu{width:100%;justify-content:space-between;}
+  }
+</style>
+<script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+<header>
+  <div class="container">
+    <div class="navbar">
+      <div class="logo"><i class="fas fa-graduation-cap"></i> Attendance System</div>
+      <div class="user-menu">
+        <div class="user-info">
+          <div class="user-name">{{student["name"]}}</div>
+          <div class="user-role">{{student["course"]}}</div>
+        </div>
+        <!-- <div class="user-avatar"><img src="{{student['photo']}}" alt="profile photo"></div> -->
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="main-content">
+    <!-- Sidebar -->
+   <div class="sidebar">
+      <ul class="sidebar-menu">
+        <li><a href="/student_dashboard" ><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="/mark_attendance"class="active"><i class="fas fa-check-circle"></i> Attendance</a></li>
+        <li><a href="#"><i class="fas fa-tasks"></i> My Tasks</a></li>
+        <li><a href="#"><i class="fas fa-calendar-alt"></i> Schedule</a></li>
+        <li><a href="#"><i class="fas fa-chart-line"></i> Performance</a></li>
+       <!-- <li><a href="#"><i class="fas fa-user"></i>Facial</a></li>-->
+        <li><a href="#"><i class="fas fa-comment-dots"></i> Chat Bot</a></li>
+        <li><a href="/student_login"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+<!--for mark attendance create by me-->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        alert("{{ messages[0] }}");
+    </script>
+    {% endif %}
+    {% endwith %}
+    <div>
+      {% if session_open %}
+        <h2>Attendance is OPEN</h2>
+        {% if already_marked %}
+          <h2>Attendance already marked</h2>
+        {% else %}
+          <a href="/mark_present">
+          <button>Mark Present</button>
+          </a>
+        {% endif %}
+      {% else %}
+        <h2>Attendance Closed ❌</h2>
+        <p>Please wait for teacher to start session.</p>
+      {% endif %}
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+      <div class="card card-full">
+        <div class="attendance-wrapper">
+          <!-- QR Scanner -->
+        <!-- <div class="attendance-card">
+            <div class="card">
+              <div class="card-header"><h2 class="card-title">Mark Attendance (QR)</h2></div>
+              <div class="scanner-container">
+                <p>Scan QR code to mark your attendance</p>
+                <div id="reader" style="width:300px;height:250px;"></div>
+                <p id="scanResult"></p>
+              <div style="margin-top:20px;">
+                 <h3>Upload QR Image</h3>
+                  <form id="qrUploadForm" enctype="multipart/form-data">
+                    <input type="file" name="file" accept="image/*" required>
+                    <button type="submit">Upload QR Code</button>
+                  </form>
+                  <p id="uploadResult"></p>
+                </div>
+                <button class="scanner-btn">QR Scanner</button>
+              </div>
+            </div>
+          </div> -->
+          <!-- QR Scanner -->
+          <!-- <div class="attendance-card">
+            <div class="card">
+              <div class="card-header"><h2 class="card-title">Mark Attendance (QR)</h2></div>
+              <div class="scanner-container">
+                <p>QR method to mark your attendance</p>
+                <div class="scanner-placeholder"><i class="fa-solid fa-qrcode"></i></div>
+                <button class="scanner-btn">QR Scanner</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Face Scanner -->
+          <!-- <div class="attendance-card">
+            <div class="card">
+              <div class="card-header"><h2 class="card-title">Mark Attendance (Face)</h2></div>
+              <div class="scanner-container">
+                <p>Facial method to mark your attendance</p>
+                <div class="scanner-placeholder"><i class="fas fa-camera"></i></div>
+                <button class="scanner-btn">Face Scanner</button>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!--Attendance statics-->
+  <!-- 
+      <div class="card">
+        <div class="card-header"><h2 class="card-title">Attendance Statistics</h2></div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value present-stat">87%</div>
+            <div class="stat-label">Overall</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value absent-stat">5</div>
+            <div class="stat-label">Absences</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value percentage-stat">92%</div>
+            <div class="stat-label">This Month</div>
+          </div>
+        </div>
+      </div>-->
+
+<script>
+let html5QrCode=new Html5Qrcode("reader");
+Html5Qrcode.getCameras().then(devices=>{
+  if(devices && devices.length){
+    let backCamera=devices.find(cam=>cam.label.toLowerCase().includes("back"));
+    let cameraId=backCamera?backCamera.id:devices[0].id;
+    html5QrCode.start(cameraId,{fps:10,qrbox:250},onScanSuccess);
+  }
+}).catch(err=>console.log(err));
+
+function sendQrToBackend(decodedText,lat,lon){
+  fetch("/scan_qr_file",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({qr_data:decodedText,lat,lon})
+  }).then(res=>res.json()).then(data=>{
+    document.getElementById("scanResult").innerText=data.msg;
+  }).catch(err=>console.error(err));
+}
+
+function onScanSuccess(decodedText){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    sendQrToBackend(decodedText,pos.coords.latitude,pos.coords.longitude);
+  },err=>{alert("Location permission denied. Cannot mark attendance.");});
+}
+
+document.getElementById("qrUploadForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+  let formData=new FormData(this);
+  navigator.geolocation.getCurrentPosition(async function(pos){
+    formData.append("lat",pos.coords.latitude);
+    formData.append("lon",pos.coords.longitude);
+    let res=await fetch("/scan_qr_file",{method:"POST",body:formData});
+    let data=await res.json();
+    document.getElementById("uploadResult").innerText=data.msg;
+  },err=>{alert("Location permission denied. Cannot mark attendance.");});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Portal - NeoCampus</title>
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --primary: #4776E6;
+    --secondary: #8E54E9;
+    --accent: #00ffff;
+    --accent-light: #ff00cc;
+    --light: #ffffff;
+    --dark: #1a1a2e;
+    --glass: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.1);
+    --shadow: 0 10px 25px rgba(0,255,255,0.1);
+    --success: #2ecc71;
+    --danger: #e74c3c;
+    --warning: #f39c12;
+  }
+
+  body {
+    background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--light);
+    overflow-x:hidden;
+  }
+
+  .container { max-width:1400px; margin:0 auto; padding:0 20px; }
+
+  /* Header */
+  header {
+    padding:20px 0;
+    background: var(--glass);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--glass-border);
+    position:sticky; top:0; z-index:1000;
+  }
+
+  .navbar { display:flex; justify-content:space-between; align-items:center; }
+
+  .logo {
+    display:flex; align-items:center; gap:10px;
+    font-family:'Montserrat', sans-serif;
+    font-size:1.8rem;
+    font-weight:700;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo i { font-size:2rem; }
+
+  .user-menu { display:flex; align-items:center; gap:20px; }
+  .user-info { text-align:right; }
+  .user-name { font-weight:700; font-size:1.1rem; }
+  .user-role { font-size:0.9rem; color: var(--accent); }
+
+  .user-avatar {
+    width:50px; height:50px; border-radius:50%;
+    background: linear-gradient(90deg,var(--accent),var(--accent-light));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:bold; font-size:1.2rem; color:#fff;
+  }
+  .user-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+
+  /* Layout */
+  .main-content { display:grid; grid-template-columns:300px 1fr; gap:30px; padding:40px 0; }
+
+  .sidebar {
+    background: var(--glass); backdrop-filter:blur(12px); border-radius:20px;
+    border:1px solid var(--glass-border); padding:25px; height:fit-content;
+  }
+
+  .sidebar-menu { list-style:none; }
+  .sidebar-menu li { margin-bottom:10px; }
+  .sidebar-menu a {
+    display:flex; align-items:center; gap:15px; padding:12px 15px;
+    border-radius:12px; color:#fff; text-decoration:none;
+    transition:0.3s;
+    font-weight:500;
+  }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); }
+  .sidebar-menu i { width:25px; text-align:center; color: var(--accent); }
+
+  .dashboard { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:25px; }
+
+  .card {
+    background: var(--glass); backdrop-filter:blur(12px); border-radius:20px;
+    border:1px solid var(--glass-border); padding:25px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-full { grid-column:1/-1; }
+
+  .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:10px; }
+  .card-title { font-family:'Montserrat', sans-serif; font-size:1.4rem; font-weight:700; color: var(--accent); }
+
+  /* Today's Schedule */
+  .today-classes ul { list-style:none; padding-left:0; }
+  .today-classes li {
+    padding:12px 0;
+    border-bottom:1px solid var(--glass-border);
+    font-family:'Montserrat', sans-serif;
+    font-weight:500;
+    font-size:1rem;
+    color: rgba(255,255,255,0.95);
+    line-height:1.5;
+  }
+  .today-classes li:last-child { border-bottom:none; }
+  .today-classes strong {
+    font-weight:600;
+    font-size:1.05rem;
+    color: var(--accent);
+  }
+  .today-classes hr {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin:8px 0;
+  }
+
+  /* Suggested Tasks */
+  .task-list { list-style:none; padding-left:0; max-height:400px; overflow-y:auto; margin-top:10px; }
+  .task-item {
+    display:flex; align-items:center; padding:12px 0; border-bottom:1px solid var(--glass-border);
+    font-family:'Montserrat', sans-serif;
+    font-weight:500;
+    font-size:1rem;
+    color: rgba(255,255,255,0.95);
+    line-height:1.5;
+    cursor:pointer;
+    transition:0.2s;
+  }
+  .task-item:last-child { border-bottom:none; }
+  .task-item:hover { background: rgba(255,255,255,0.05); border-radius:10px; }
+
+  .task-priority { width:10px; height:40px; border-radius:10px; margin-right:12px; }
+  .priority-high { background: var(--danger); }
+  .priority-medium { background: var(--warning); }
+  .priority-low { background: var(--success); }
+
+  .task-details { flex-grow:1; }
+  .task-title { font-weight:600; font-size:1.05rem; color: var(--accent); }
+  .task-desc { font-family:'Raleway', sans-serif; font-weight:400; font-size:0.95rem; color: rgba(255,255,255,0.7); }
+  .task-time { font-family:'Montserrat', sans-serif; font-weight:500; color: var(--accent-light); }
+
+  /* Attendance Stats */
+  .stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:15px; text-align:center; margin-top:10px; }
+  .stat-item { padding:15px; border-radius:15px; background: var(--glass); }
+  .stat-value { font-size:2.2rem; font-weight:700; }
+  .stat-label { font-size:0.9rem; color: rgba(255,255,255,0.7); }
+  .present-stat { color: var(--success); }
+  .absent-stat { color: var(--danger); }
+  .percentage-stat { color: var(--accent); }
+
+  /* Responsive */
+  @media(max-width:1024px){ .dashboard{ grid-template-columns:1fr; } }
+  @media(max-width:768px){
+    .main-content{ grid-template-columns:1fr; }
+    .sidebar{ order:2; }
+    .dashboard{ order:1; }
+    .navbar{ flex-direction:column; gap:15px; }
+    .user-menu{ width:100%; justify-content:space-between; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="container">
+    <div class="navbar">
+      <div class="logo"> <i class="fas fa-user-graduate"></i> <span>Attendance System</span></div>
+      <div class="user-menu">
+        <div class="user-info">
+          <div class="user-name">{{student["name"]}}</div>
+          <div class="user-course">{{student["department"]}}</div>
+        </div>
+        <!-- <div class="user-avatar"><img src="{{student["photo"]}}" alt="profile photo"></div> -->
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+  <div class="main-content">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-menu">
+        <li><a href="/student_dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="/mark_attendance"><i class="fas fa-check-circle"></i> Attendance</a></li>
+        <li><a href="#"><i class="fas fa-tasks"></i> Teacher Status</a></li>
+        <li><a href="#"><i class="fas fa-calendar-alt"></i> Syllabus</a></li>
+        <li><a href="#"><i class="fas fa-chart-line"></i> Performance Card</a></li>
+       <!-- <li><a href="#"><i class="fas fa-book"></i> Facial</a></li>-->
+        <li><a href="#"><i class="fas fa-comment-dots"></i> Chat Bot</a></li>
+        <li><a href="/student_login"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+
+      <!-- Today's Schedule -->
+      <div class="card card-full"style="width: 500px;height:500px;">
+        <div class="card-header">
+          <h2 class="card-title">Today's Schedule</h2>
+        </div>
+        <div class="today-classes">
+          {% if schedules %}
+            <ul>
+              {% for s in schedules %}
+                <li>
+                  <strong>{{ s[4] }} ({{ s[1] }})</strong><br>
+                  Teacher: {{ s[3] }}<br>
+                  {% if s[0] == "present" %}
+                    Status: ✅ Class Held<br>
+                    Time: {{ s[2] }}<br>
+                    Topic: {{ s[5] }}
+                  {% else %}
+                    Status: ❌ No Class today<br>
+                  {% endif %}
+                  <hr>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No classes scheduled in the last 12 hours.</p>
+          {% endif %}
+        </div>
+      </div>
+
+        
+      <!-- Suggested Tasks -->
+      <div class="card"style="width: 500px;margin-left:600px;margin-top:-520px;">
+        <div class="card-header"><h2 class="card-title">Suggested Tasks</h2></div>
+        <ul class="task-list">
+          {% if schedules %}{% for s in schedules %}
+            <li class="task-item">
+              <div class="task-priority priority-high"></div>
+              <div class="task-details">
+                <div class="task-title">{{s[4]}}</div>
+                <div class="task-desc">{{s[6]}}</div>
+              </div>
+              <div class="task-time">{{s[2]}}</div>
+            </li>
+          {% endfor %}{% endif %}
+        </ul>
+      </div>
+
+    
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
