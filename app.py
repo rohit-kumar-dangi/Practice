@@ -12,10 +12,13 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "secret123"
 
+
 app.config['MYSQL_HOST'] = os.environ.get("DB_HOST")
 app.config['MYSQL_USER'] = os.environ.get("DB_USER")
 app.config['MYSQL_PASSWORD'] = os.environ.get("DB_PASSWORD")
 app.config['MYSQL_DB'] = os.environ.get("DB_NAME")
+app.config['MYSQL_PORT'] = int(os.environ.get("DB_PORT"))
+
 
 
 mysql = MySQL(app)
@@ -252,3 +255,4 @@ def mark_present():
 if __name__ == "__main__":
 
     app.run(debug=True, use_reloader=False)
+
