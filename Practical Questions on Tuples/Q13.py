@@ -1,0 +1,1 @@
+#  Write a program to extract elements at even positions from a tuple.

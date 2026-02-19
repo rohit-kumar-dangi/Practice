@@ -1,0 +1,1 @@
+# Write a program to check whether a tuple is a palindrome.
