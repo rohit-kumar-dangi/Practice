@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard - Attendance System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* === Global Styles === */
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Raleway', sans-serif; }
+    body { background: linear-gradient(135deg,#0f0c29,#302b63,#24243e); color: #fff; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+
+    :root {
+      --primary:#4776E6; --secondary:#8E54E9; --accent:#00BFBF; --light:#fff;
+      --glass: rgba(255,255,255,0.1); --glass-border: rgba(255,255,255,0.2); --shadow: 0 15px 35px rgba(0,0,0,0.2);
+      --gradient: linear-gradient(135deg,var(--primary),var(--secondary));
+    }
+
+    /* === Header === */
+    header { background: rgba(26,26,46,0.95); backdrop-filter: blur(10px); padding: 15px 20px; position: sticky; top:0; z-index:1000; }
+    .navbar { display:flex; justify-content:space-between; align-items:center; }
+    .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.6rem; background: var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .logo i { font-size:1.8rem; }
+    .user-menu { display:flex; align-items:center; gap:15px; }
+    .user-info { text-align:right; }
+    .user-name { font-weight:600; font-size:1rem; }
+    .user-role { font-size:0.85rem; color:var(--accent); }
+    .user-avatar { width:40px; height:40px; border-radius:50%; background: var(--gradient); display:flex; align-items:center; justify-content:center; font-weight:bold; color:#fff; }
+
+    /* === Layout === */
+    .main-content { display:flex; flex-wrap:wrap; gap:20px; padding:20px; max-width:1400px; margin:0 auto; }
+    .sidebar { flex:1 1 220px; background:var(--glass); backdrop-filter:blur(12px); border-radius:15px; border:1px solid var(--glass-border); padding:20px; min-height:400px; }
+    .sidebar-menu { list-style:none; }
+    .sidebar-menu li { margin-bottom:10px; }
+    .sidebar-menu a { display:flex; align-items:center; gap:10px; padding:10px; border-radius:8px; transition:all 0.3s; }
+    .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); }
+    .sidebar-menu i { width:25px; text-align:center; color:var(--accent); }
+
+    .dashboard { flex:3 1 700px; display:grid; grid-template-columns: 1fr; gap:20px; }
+    @media(min-width:900px){ .dashboard { grid-template-columns: 1fr 350px; } }
+
+    /* === Cards === */
+    .card { background:var(--glass); backdrop-filter:blur(12px); border-radius:15px; border:1px solid var(--glass-border); padding:20px; box-shadow:var(--shadow); }
+    .card h2 { font-size:1.4rem; margin-bottom:15px; font-weight:600; background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .card-content { display:flex; flex-direction:column; gap:15px; }
+
+    /* === Form Styles === */
+    form .row { display:flex; flex-direction:column; margin-bottom:10px; }
+    form label { margin-bottom:5px; font-weight:500; color:var(--accent); }
+    form input, form select { padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#fff; outline:none; }
+    form input::placeholder { color:rgba(255,255,255,0.5); }
+    form button { background:var(--gradient); color:#fff; border:none; padding:12px; border-radius:50px; cursor:pointer; font-weight:600; transition:all 0.3s; }
+    form button:hover { transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,191,191,0.3); }
+
+    /* === QR Section === */
+    .qr-section { display:flex; flex-direction:column; align-items:center; gap:10px; }
+    .qr-section img.qr { width:220px; height:220px; }
+    .qr-section p { margin:3px 0; font-size:0.95rem; }
+    .small { font-size:0.8rem; color:rgba(255,255,255,0.6); }
+
+    /* === Geo Block === */
+    #geoBlock { display:block; margin-top:10px; }
+    .row input[disabled] { background: rgba(255,255,255,0.02); cursor:not-allowed; }
+
+    /* === Countdown === */
+    #countdown { font-weight:bold; color:var(--accent); }
+
+    /* === Responsive Fix === */
+    @media(max-width:768px){
+      .main-content { flex-direction:column; }
+      .dashboard { grid-template-columns:1fr; }
+    }
+    /* === Schedule Classes Styling === */
+#schedule-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* gap between schedule blocks */
+}
+
+.schedule-block {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 25px; /* more padding inside each block */
+  box-shadow: var(--shadow);
+}
+
+.schedule-block label {
+  display: block;
+  margin-bottom: 8px; /* more space below label */
+  font-weight: 500;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.schedule-block select,
+.schedule-block input,
+.schedule-block textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 20px; /* more gap between inputs */
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.schedule-block textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.schedule-block input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+/* Group fields side-by-side on larger screens */
+.present-fields, .absent-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px 25px; /* increased gaps horizontally & vertically */
+  margin-top: 20px; /* gap above group */
+}
+
+/* Radio buttons row spacing */
+.schedule-block p {
+  margin: 20px 0;
+  display: flex;
+  gap: 25px;
+  font-size: 0.9rem;
+}
+
+.schedule-block p label {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Buttons spacing */
+form button[type="button"] {
+  background: transparent;
+  border: 2px dashed var(--accent);
+  padding: 8px 15px;
+  border-radius: 50px;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-right: 15px;
+  margin-top: 10px;
+}
+
+form button[type="button"]:hover {
+  background: var(--accent);
+  color: #fff;
+}
+/* Wrap form in a container */
+.schedule-wrapper {
+  max-width: 800px; /* yahan size control karte ho — 600, 700, 800px try kar sakte ho */
+  margin: 0 auto;   /* center horizontally */
+  padding: 20px;    /* thoda inner padding */
+}
+
+/* Inside block also thoda padding reduce kar sakte ho */
+.schedule-block {
+  padding: 20px;  /* pehle 25px tha, thoda chhota */
+}
+
+
+  </style>
+
+  <script>
+    function addSchedule() {
+      let container=document.getElementById("schedule-container");
+      let count=container.children.length;
+      if(count<10){
+        let clone=container.children[0].cloneNode(true);
+        clone.querySelectorAll("input, textarea, select").forEach(el=>el.value="");
+        container.appendChild(clone);
+      } else {alert("Maximum 10 schedules allowed");}
+    }
+    function removeSchedule() {
+      let container=document.getElementById("schedule-container");
+      if(container.children.length>1){
+        container.removeChild(container.lastElementChild);
+      } else {alert("At least 1 schedule required");}
+    }
+    function toggleFields(radio,block){
+      let presentFields=block.querySelector(".present-fields");
+      let absentFields=block.querySelector(".absent-fields");
+      if(radio.value==="present"){
+        presentFields.style.display="block";
+        absentFields.style.display="none";
+      } else {
+        presentFields.style.display="none";
+        absentFields.style.display="block";
+      }
+    }
+   
+
+
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="navbar">
+        <div class="logo">
+          <i class="fas fa-graduation-cap"></i>
+          <span>Attendance System</span>
+        </div>
+        <div class="user-menu">
+          <div class="user-info">
+            <div class="user-name">{{session["teacher"]["name"]}}</div>
+            <div class="user-dept">{{session["teacher"]["departmant"]}}</div>
+          </div>
+          <div class="user-avatar">{{student}}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-menu">
+        <li><a href="/teacher_dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="/take_attendance"><i class="fas fa-user-circle"></i> Attendance</a></li>
+        <li><a href="/register_face"><i class="fas fa-user-circle"></i> Register Face</a></li>
+        <li><a href="low_attendance"><i class="fas fa-tasks"></i> Low Attendance Student</a></li>
+        <!-- <li><a href="#"><i class="fas fa-calendar-alt"></i>Today Schedule</a></li> -->
+        <li><a href="/performance_monitoring"><i class="fas fa-chart-line"></i> Performance Monitoring</a></li>
+        
+        <!-- <li><a href="#"><i class="fas fa-comments"></i> Instant Messaging</a></li> -->
+       <!--<li><a href="/register"><i class="fas fa-user-plus"></i> New Students</a></li>-->
+        <li><a href="/logout_teacher"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Right Side Content -->
+    <!-- Dashboard -->
+    <div class="dashboard">
+      <!-- Attendance Form -->
+      <div class="card">
+        <h3>Update Class Status</h3>
+
+        <form action="/update_teacher_status" method="POST">
+
+          <select name="department">
+            {% for d in departments %}
+            <option value="{{d[0]}}">{{d[1]}}</option>
+            {% endfor %}
+          </select>
+
+          <select name="semester">
+            {% for s in semesters %}
+            <option value="{{s[0]}}">Semester {{s[0]}}</option>
+            {% endfor %}
+          </select>
+
+          <select name="subject">
+            {% for sub in subjects %}
+            <option value="{{sub[0]}}">{{sub[1]}}</option>
+            {% endfor %}
+          </select>
+
+          <select name="status">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
+
+            <button type="submit">Update Status</button>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

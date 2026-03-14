@@ -1,1 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoCampus | Smart Attendance System</title>
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Audiowide&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Reset */
+    * {margin:0; padding:0; box-sizing:border-box;}
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(12px);
+      background: rgba(15,15,35,0.7);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      z-index: 1000;
+    }
+    .logo {
+      font-family: 'Audiowide', cursive;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg,#ff00cc,#00ffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+    nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      color: #ddd;
+      position: relative;
+      transition: 0.3s;
+    }
+    nav a::after {
+      content:"";
+      position: absolute;
+      bottom:-5px;
+      left:0;
+      width:0;
+      height:2px;
+      background: #00ffff;
+      transition: width 0.3s;
+    }
+    nav a:hover::after {width:100%;}
+    nav a:hover {color:#00ffff;}
+
+    /* Hero */
+   .hero {
+  height: auto;               /* Let height fit content */
+  display: flex;
+  justify-content: center;    /* Horizontal center */
+  align-items: flex-start;    /* Push to top */
+  flex-direction: column;
+  text-align: center;
+  padding: 100px 20px 40px;   /* Push down a bit below header */
+  margin-top: 10px;   
+  margin-left: 300px;        /* Adjust if needed */
+}
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg,#00ffff,#ff00cc);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 0 20px rgba(0,255,255,0.6);
+      margin-bottom:20px;
+    }
+    .hero p {
+      max-width:600px;
+      font-size:1.2rem;
+      color:#ccc;
+      margin-bottom:40px;
+      line-height:1.6;
+    }
+    .hero .btn {
+      padding:15px 35px;
+      border-radius:50px;
+      background: linear-gradient(90deg,#00ffff,#ff00cc);
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      transition:0.3s;
+      box-shadow:0 0 20px rgba(0,255,255,0.4);
+    }
+    .hero .btn:hover {
+      transform:translateY(-5px);
+      box-shadow:0 0 30px rgba(255,0,204,0.6);
+    }
+
+    /* Cards */
+   .cards {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:40px;
+  padding:40px 20px 60px; /* ↓ reduce top padding */
+  margin-top: -30px;       /* optional: pull section even closer to heading */
+}
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      padding:40px;
+      width:350px;
+      text-align:center;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition:0.4s;
+      box-shadow: 0 0 25px rgba(0,255,255,0.1);
+      margin-top: 0px; 
+    }
+    .card:hover {
+      transform: translateY(-15px) scale(1.05);
+      box-shadow: 0 0 40px rgba(255,0,204,0.4);
+    }
+    .card i {
+      font-size:50px;
+      margin-bottom:20px;
+      background: linear-gradient(90deg,#00ffff,#ff00cc);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .card h2 {
+      font-size:1.8rem;
+      margin-bottom:15px;
+      background: linear-gradient(90deg,#ff00cc,#00ffff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .card p {
+      font-size:1rem;
+      color:#ccc;
+      margin-bottom:25px;
+    }
+    .card a {
+      display:inline-block;
+      padding:12px 25px;
+      border-radius: 10px;
+      text-decoration:none;
+      font-weight:600;
+      color:#fff;
+      background: linear-gradient(90deg,#00ffff,#ff00cc);
+      transition:0.3s;
+    }
+    .card a:hover {
+      background: linear-gradient(90deg,#ff00cc,#00ffff);
+      box-shadow:0 0 20px rgba(0,255,255,0.4);
+    }
+
+    /* Footer */
+    footer {
+      text-align:center;
+      padding:40px 20px;
+      background:#0a0a1f;
+      border-top:1px solid rgba(255,255,255,0.1);
+    }
+    footer .logo {
+      font-size:1.5rem;
+      margin-bottom:15px;
+    }
+    footer p {
+      font-size:0.9rem;
+      color:#777;
+    }
+
+    /* Responsive */
+    @media (max-width:768px){
+      .hero h1{font-size:2.5rem;}
+      .cards{flex-direction:column; align-items:center;}
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo"><i class="fas fa-robot"></i> Automated Attendance</div>
+
+  </header>
+
+  <!-- Hero -->
+   <div >
+  <section class="hero">
+    <h1>Smart Attendance System</h1>
+    
+  </section></div>
+
+  <!-- Cards -->
+  <section class="cards" id="cards">
+    <div class="card">
+      <i class="fas fa-user-graduate"></i>
+      <h2>Students</h2>
+      <pre style="font-size: large;  font-family: Arial, Helvetica, sans-serif; ">smart attendance 
+
+performance analytics
+
+Chat bot </pre><br>
+
+      <a href="/student_login">Student Portal</a>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-chalkboard-teacher"></i>
+      <h2>Faculty</h2>
+     <pre style="font-size: large;  font-family: Arial, Helvetica, sans-serif; ">Dynamic QR code generation 
+
+Advance student analytics
+
+Smart notification system </pre><br>
+      <a href="teacher_login">Faculty Portal</a>
+    </div>
+  </section>
+
+
+
+</body>
+</html>
