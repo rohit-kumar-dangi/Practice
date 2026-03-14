@@ -52,10 +52,27 @@ def teacher_login():
 
 @app.route("/teacher_dashboard")
 def teacher_dashboard():
-    if "teacher" in session:
-        return render_template("teacher_dashboard.html")
-    else:
+
+    if "teacher" not in session:
         return redirect("/teacher_login")
+
+    cur = mysql.connection.cursor()
+
+    # get departments
+    cur.execute("SELECT department_id, department FROM departments")
+    departments = cur.fetchall()
+
+    # get semesters
+    cur.execute("SELECT DISTINCT semester FROM subjects ORDER BY semester")
+    semesters = cur.fetchall()
+
+    # get subjects
+    cur.execute("SELECT subject_id, subject_name FROM subjects")
+    subjects = cur.fetchall()
+
+    cur.close()
+
+    return render_template("teacher_dashboard.html",teacher=session["teacher"],departments=departments,semesters=semesters,subjects=subjects)
     
 @app.route("/take_attendance")
 def take_attendance():
@@ -170,14 +187,111 @@ def add_face():
 
     cur = mysql.connection.cursor()
 
-    cur.execute(
-        "UPDATE students SET face_encoding=%s WHERE student_id=%s",
-        (json.dumps(encoding), student_id)
-    )
+    cur.execute("UPDATE students SET face_encoding=%s WHERE student_id=%s",(json.dumps(encoding), student_id))
 
     mysql.connection.commit()
 
     return "Face registered successfully"
+
+@app.route("/update_teacher_status", methods=["POST"])
+def update_teacher_status():
+
+    if "teacher" not in session:
+        return redirect("/teacher_login")
+
+    teacher_id = session["teacher"]["id"]
+    subject_id = request.form["subject"]
+    department_id = request.form["department"]
+    semester = request.form["semester"]
+    status = request.form["status"]
+
+    cur = mysql.connection.cursor()
+
+    # check if today's status already exists
+    cur.execute("""
+        SELECT id FROM teacher_status
+        WHERE teacher_id=%s
+        AND subject_id=%s
+        AND class_date=CURDATE()
+    """,(teacher_id, subject_id))
+
+    existing = cur.fetchone()
+
+    if existing:
+        cur.execute("""
+            UPDATE teacher_status
+            SET status=%s
+            WHERE id=%s
+        """,(status, existing[0]))
+    else:
+        cur.execute("""
+            INSERT INTO teacher_status
+            (teacher_id, subject_id, department_id, semester, class_date, status)
+            VALUES (%s,%s,%s,%s,CURDATE(),%s)
+        """,(teacher_id, subject_id, department_id, semester, status))
+
+    mysql.connection.commit()
+
+    flash("Status updated successfully")
+
+    return redirect("/teacher_dashboard")
+
+@app.route("/low_attendance")
+def low_attendance():
+
+    if "teacher" not in session:
+        return redirect("/teacher_login")
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+    SELECT 
+        st.name,
+        SUM(CASE WHEN ar.attend='Present' THEN 1 ELSE 0 END) AS present_count,
+        COUNT(ar.id) AS total_classes,
+        ROUND(
+            (SUM(CASE WHEN ar.attend='Present' THEN 1 ELSE 0 END) / COUNT(ar.id)) * 100,
+            2
+        ) AS attendance_percentage
+
+    FROM students st
+
+    LEFT JOIN attendance_records ar
+    ON st.student_id = ar.student_id
+
+    GROUP BY st.student_id
+    HAVING attendance_percentage < 75
+    """)
+
+    students = cur.fetchall()
+    cur.close()
+
+    return render_template(
+        "low_attendance.html",
+        students=students,
+        teacher=session["teacher"]
+    )
+
+@app.route("/performance_monitoring")
+def performance_monitoring():
+
+    if "teacher" not in session:
+        return redirect("/teacher_login")
+
+    # Demo data (temporary)
+    performance = [
+        {"name":"Priyanshu", "subject":"DBMS", "mid":78, "internal":22, "total":100},
+        {"name":"Aman", "subject":"DBMS", "mid":65, "internal":18, "total":83},
+        {"name":"Chandra", "subject":"DBMS", "mid":40, "internal":12, "total":52},
+        {"name":"Rohit", "subject":"DBMS", "mid":88, "internal":25, "total":113},
+        {"name":"Student 5", "subject":"DBMS", "mid":30, "internal":10, "total":40}
+    ]
+
+    return render_template(
+        "performance_monitoring.html",
+        teacher=session["teacher"],
+        performance=performance
+    )
 
 @app.route("/logout_teacher")
 def logout_teacher():
@@ -214,11 +328,59 @@ def student_login():
 
 @app.route("/student_dashboard")
 def student_dashboard():
-    if "student" in session:
+    if "student" not in session:
         s_id=session["student"]["id"]
-        return render_template("student_dashboard.html",student=session["student"])
-    else:
         return redirect("/student_login")
+    else:
+
+        dept = session["student"]["department"]
+        sem = session["student"]["semester"]
+
+        cur = mysql.connection.cursor()
+
+        cur.execute("""
+            SELECT s.subject_name, ts.status
+            FROM teacher_status ts
+            JOIN subjects s ON ts.subject_id = s.subject_id
+            WHERE ts.department_id=%s
+            AND ts.semester=%s
+            AND ts.class_date = CURDATE()
+        """,(dept,sem))
+
+        schedule = cur.fetchall()
+
+        return render_template(
+            "student_dashboard.html",
+            student=session["student"],
+            schedule=schedule
+        )
+        
+
+@app.route("/attendance")
+def attendance():
+
+    if "student" not in session:
+        return redirect("/student_login")
+
+    student_id = session["student"]["id"]
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT s.subject_name,
+               DATE(a.marked_time) as date,
+               a.attend
+        FROM attendance_records a
+        JOIN attendance_sessions ses ON a.session_id = ses.id
+        JOIN subjects s ON ses.subject_id = s.subject_id
+        WHERE a.student_id = %s
+        ORDER BY a.marked_time DESC
+    """, (student_id,))
+
+    records = cur.fetchall()
+    cur.close()
+
+    return render_template("attendance.html",student=session["student"],records=records)
 
 @app.route("/mark_attendance")
 def mark_attendance():
@@ -328,6 +490,7 @@ def verify_face():
     else:
         return "Face not matched"
 
+
 @app.route("/logout_student")
 def logout_student():
     session.pop("student", None)
@@ -336,6 +499,4 @@ def logout_student():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
-    # app.run(host="0.0.0.0", port=5000)
-    #app.run(host="0.0.0.0", port=5000, ssl_context="adhoc")
+    app.run(host="0.0.0.0", port=5000, ssl_context="adhoc", debug=False)
