@@ -1,0 +1,233 @@
+<!-- templates/generate_attendance.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard - Attendance System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* === Global Styles === */
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Raleway', sans-serif; }
+    body { background: linear-gradient(135deg,#0f0c29,#302b63,#24243e); color: #fff; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+
+    :root {
+      --primary:#4776E6; --secondary:#8E54E9; --accent:#00BFBF; --light:#fff;
+      --glass: rgba(255,255,255,0.1); --glass-border: rgba(255,255,255,0.2); --shadow: 0 15px 35px rgba(0,0,0,0.2);
+      --gradient: linear-gradient(135deg,var(--primary),var(--secondary));
+    }
+
+    /* === Header === */
+    header { background: rgba(26,26,46,0.95); backdrop-filter: blur(10px); padding: 15px 20px; position: sticky; top:0; z-index:1000; }
+    .navbar { display:flex; justify-content:space-between; align-items:center; }
+    .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.6rem; background: var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .logo i { font-size:1.8rem; }
+    .user-menu { display:flex; align-items:center; gap:15px; }
+    .user-info { text-align:right; }
+    .user-name { font-weight:600; font-size:1rem; }
+    .user-role { font-size:0.85rem; color:var(--accent); }
+    .user-avatar { width:40px; height:40px; border-radius:50%; background: var(--gradient); display:flex; align-items:center; justify-content:center; font-weight:bold; color:#fff; }
+
+    /* === Layout === */
+    .main-content { display:flex; flex-wrap:wrap; gap:20px; padding:20px; max-width:1400px; margin:0 auto; }
+    .sidebar { flex:1 1 220px; background:var(--glass); backdrop-filter:blur(12px); border-radius:15px; border:1px solid var(--glass-border); padding:20px; min-height:400px; }
+    .sidebar-menu { list-style:none; }
+    .sidebar-menu li { margin-bottom:10px; }
+    .sidebar-menu a { display:flex; align-items:center; gap:10px; padding:10px; border-radius:8px; transition:all 0.3s; }
+    .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); }
+    .sidebar-menu i { width:25px; text-align:center; color:var(--accent); }
+
+    .dashboard { flex:3 1 700px; display:grid; grid-template-columns: 1fr; gap:20px; }
+    @media(min-width:900px){ .dashboard { grid-template-columns: 1fr 350px; } }
+
+    /* === Cards === */
+    .card { background:var(--glass); backdrop-filter:blur(12px); border-radius:15px; border:1px solid var(--glass-border); padding:20px; box-shadow:var(--shadow); }
+    .card h2 { font-size:1.4rem; margin-bottom:15px; font-weight:600; background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .card-content { display:flex; flex-direction:column; gap:15px; }
+
+    /* === Form Styles === */
+    form .row { display:flex; flex-direction:column; margin-bottom:10px; }
+    form label { margin-bottom:5px; font-weight:500; color:var(--accent); }
+    form input, form select { padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#fff; outline:none; }
+    form input::placeholder { color:rgba(255,255,255,0.5); }
+    form button { background:var(--gradient); color:#fff; border:none; padding:12px; border-radius:50px; cursor:pointer; font-weight:600; transition:all 0.3s; }
+    form button:hover { transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,191,191,0.3); }
+
+    /* === QR Section === */
+    .qr-section { display:flex; flex-direction:column; align-items:center; gap:10px; }
+    .qr-section img.qr { width:220px; height:220px; }
+    .qr-section p { margin:3px 0; font-size:0.95rem; }
+    .small { font-size:0.8rem; color:rgba(255,255,255,0.6); }
+
+    /* === Geo Block === */
+    #geoBlock { display:block; margin-top:10px; }
+    .row input[disabled] { background: rgba(255,255,255,0.02); cursor:not-allowed; }
+
+    /* === Countdown === */
+    #countdown { font-weight:bold; color:var(--accent); }
+
+    /* === Responsive Fix === */
+    @media(max-width:768px){
+      .main-content { flex-direction:column; }
+      .dashboard { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="navbar">
+      <div class="logo">Attendance System</div>
+      <div class="user-menu">
+        <div class="user-info">
+          <div class="user-name">{{teacher["name"]}}</div>
+          <div class="user-role">Computer Science</div>
+        </div>
+        <div class="user-avatar">{{student}}</div>
+      </div>
+    </div>
+  </header>
+<p>{{departements}}</p>
+  <div class="main-content">
+    <!-- Sidebar -->
+   <div class="sidebar">
+      <ul class="sidebar-menu">
+        <li><a href="/teacher_dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="/take_attendance"><i class="fas fa-user-circle"></i> Attendance</a></li>
+        <li><a href="/register_face"><i class="fas fa-user-circle"></i> Register Face</a></li>
+        <li><a href="low_attendance"><i class="fas fa-tasks"></i> Low Attendance Student</a></li>
+        <!-- <li><a href="#"><i class="fas fa-calendar-alt"></i>Today Schedule</a></li> -->
+        <li><a href="/performance_monitoring"><i class="fas fa-chart-line"></i> Performance Monitoring</a></li>
+        
+        <!-- <li><a href="#"><i class="fas fa-comments"></i> Instant Messaging</a></li> -->
+       <!--<li><a href="/register"><i class="fas fa-user-plus"></i> New Students</a></li>-->
+        <li><a href="/logout_teacher"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+    <!-- Dashboard -->
+    <div class="dashboard">
+      <!-- Attendance Form -->
+      <div class="card">
+  <h2> Add Face </h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, msg in messages %}
+        <script>
+        alert("{{msg}}");
+        </script>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <div>
+        <form id="faceForm">
+            <div class="row">
+                <label>Department</label>
+                <select name="department" required>
+                {% for d in departments %}
+                <option value="{{ d[0] }}" style="color:#000;">
+                {{ d[1] }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div class="row">
+                <label>Course</label>
+                <select name="course" required>
+                {% for c in courses %}
+                <option value="{{ c[0] }}" style="color:#000;">
+                Course {{ c[0] }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div class="row">
+                <label>Semester</label>
+                <select name="semester" required>
+                {% for s in semesters %}
+                <option value="{{ s[0] }}" style="color:#000;">
+                Semester {{ s[0] }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div class="row">
+                <label>Student</label>
+                <select name="student" required>
+                {% for st in students %}
+                <option value="{{ st[0] }}" style="color:#000;">
+                {{ st[1] }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+            <div>
+                <h2>Register Student Face</h2>
+                <video id="video" width="320" autoplay></video>
+                <br>
+                <button type="button" onclick="captureFace()">Register Face</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+  <script>
+    const video = document.getElementById("video");
+
+    navigator.mediaDevices.getUserMedia({video:true})
+    .then(stream=>{
+    video.srcObject = stream;
+        });
+
+function captureFace(){
+
+const canvas = document.createElement("canvas");
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+
+const ctx = canvas.getContext("2d");
+ctx.drawImage(video,0,0);
+
+canvas.toBlob(function(blob){
+
+let formData = new FormData();
+
+// send image
+formData.append("image", blob, "face.jpg");
+
+// send selected values
+formData.append("department",
+document.querySelector('[name="department"]').value);
+
+formData.append("course",
+document.querySelector('[name="course"]').value);
+
+formData.append("semester",
+document.querySelector('[name="semester"]').value);
+
+formData.append("student",
+document.querySelector('[name="student"]').value);
+
+fetch("/add_face",{
+method:"POST",
+body:formData
+})
+.then(res => res.text())
+.then(data =>{
+alert(data);
+});
+
+},"image/jpeg");
+}
+  </script>
+</body>
+</html>
