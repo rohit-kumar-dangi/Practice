@@ -1,0 +1,28 @@
+body {
+    margin: 0;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #2e416d;
+}
+
+#tran_tab{
+    color: aliceblue;
+}
+
+#link{
+    display: flex;
+    flex-direction:row;
+}
+.link{
+    color: aqua;
+    margin: 10px;
+}
+
+#backbutton{
+    display: flex;
+    flex-direction:column;
+}

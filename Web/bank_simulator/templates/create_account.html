@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_account.css') }}">
+</head>
+<body>
+    <div>
+        <form method="POST" action="/create_account" class="form">
+            <div class="option">
+                <label for="acc_type">Acoount type</label>
+                <select name="acc_type" id="acc_type">
+                    <option value="Savings">Savings</option>
+                    <option value="Current">Current</option>
+                </select>
+            </div>
+
+            <div class="option">
+                <label for="in_bal">Initial deposit</label>
+                <input type="number" min="1000" name="in_balance" id="in_bal" placeholder="Minimum 1000">
+            </div>
+
+            <div class="option">
+                <label for="tpin">Transaction pin</label>
+                <input type="password" name="tpin" id="tpin" placeholder="Enter 4 digit T-PIN">
+            </div>
+
+            <div class="option">
+                <button type="submit">Create Account</button>
+            </div>
+        </form>
+        <br>
+        <a href="/dashboard" class="link">⬅ Back to Dashboard</a>
+    </div>
+</body>
+</html>

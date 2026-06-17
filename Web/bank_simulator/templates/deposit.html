@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/deposit.css') }}">
+</head>
+<body>
+
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <script>
+            alert("{{ messages[0] }}");
+        </script>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <div>
+        {% if accounts %}
+        <form action="/deposit" method="post" class="form">
+        <div>
+            <label for="acc_num">Accounts</label>
+
+            <select name="acc_num" id="acc_num">
+                {% for acc in accounts %}
+                    <option value="{{acc}}">{{acc}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="amount">Amount</label>
+            <input type="number" name="amount" id="amount">
+        </div>
+        <div>
+            <button type="submit">Deposit</button>
+        </div>
+        </form>
+        {% else %}
+        <div style="color: aliceblue;">
+            <p>Account not fount</p>
+            <p>Please create an account</p>
+        </div>
+        {% endif %}
+        <br>
+        <a href="/dashboard" class="link">⬅ Back to Dashboard</a>
+    </div>
+    
+    
+</body>
+</html>

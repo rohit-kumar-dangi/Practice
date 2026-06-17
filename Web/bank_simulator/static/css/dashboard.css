@@ -1,0 +1,44 @@
+body {
+    margin: 0;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #2e416d;
+}
+
+#accounts{
+    display: flex;
+    flex-direction: column;
+}
+#acc_head{
+    color: #54a7ff;
+}
+.account_card{
+    display: flex;
+    flex-direction: row;
+    color: #b3b7be;
+    margin-bottom: 10px;
+    border: 2px;
+    border-style: solid;
+    border-radius: 8px;
+    border-color: aliceblue;
+}
+.acc{
+    display: flex;
+    flex-direction: column;
+}
+.acc_ele{
+    margin: 8px;
+}
+
+#link{
+    display: flex;
+    flex-direction:row;
+}
+.link{
+    color: aqua;
+    margin: 10px;
+}

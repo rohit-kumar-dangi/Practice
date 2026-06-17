@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <script>
+            alert("{{ messages[0] }}");
+        </script>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <div>
+        <div id="accounts">
+            <div id="acc_head">
+                <h2>Your Accounts</h2>
+            </div>
+            <div>
+                {% for acc in accounts %}
+                    <div class="account_card">
+                        <div class="acc">
+                            <div class="acc_ele">Acc No : {{ acc[0] }}</div>
+                            <div class="acc_ele">Acc Type : {{ acc[2] }}</div>
+                            <div class="acc_ele">Balance : ₹{{ acc[3] }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br><br><br>
+        <div id="link">
+            <a href="/deposit" class="link">Deposit</a>
+            <a href="/withdraw" class="link">Withdraw</a>
+            <a href="/create_account" class="link">Create Account</a>
+            <a href="/transactions" class="link">Transactions</a>
+        </div>
+    </div>
+</body>
+</html>
