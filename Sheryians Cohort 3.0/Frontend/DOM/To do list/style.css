@@ -1,0 +1,123 @@
+*{
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+}
+
+html,body{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+main{
+    height: 90%;
+    aspect-ratio: 2/3;
+    background-color: aliceblue;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(1%);
+}
+
+.heading{
+    width: 85%;
+    height: 8%;
+    display: flex;
+    align-items: center;
+}
+
+.heading button{
+    height: 54%;
+    width: 13%;
+    border-radius: 10px;
+}
+
+.add{
+    height: 8%;
+    width: 90%;
+    padding: calc(2%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.add input{
+    height: 90%;
+    width: 80%;
+    border-radius: 8px;
+    padding: calc(2%);
+}
+.add button{
+    height: 80%;
+    width: 13%;
+    border-radius: 5px;
+}
+
+.tasks{
+    width: 90%;
+    height: 82%;
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    gap: calc(1%);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.tasks::-webkit-scrollbar{
+    display: none;
+}
+
+.task{
+    width: 100%;
+    height: 10%;
+    min-height: 10%;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: calc(2%);
+    padding-right: calc(2%);
+    background-color: rgb(139, 146, 146);
+}
+
+.task-p1{
+    height: 90%;
+    width: 70%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.task-p1 p{
+    margin-left: 5%;
+    font-size: large;
+}
+
+.task-p2{
+    height: 90%;
+    width: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+.task button{
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.edit{
+    height: 60%;
+    width: 35%;
+}
+
+.delete{
+    height: 60%;
+    width: 55%;
+}

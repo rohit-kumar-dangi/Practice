@@ -1,0 +1,37 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,body{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #161616;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    gap: 20px;
+}
+
+.bulb{
+    height: 20%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    border-color: aliceblue;
+    border-width: 1px;
+    border-style: solid;
+}
+.bulb2{
+    background-color: yellow;
+}
+button{
+    height: 3%;
+    aspect-ratio: 2.5/1;
+    border-color: aliceblue;
+    border-radius: 999px;
+    border-width: 1px;
+    border-style: solid;
+}
