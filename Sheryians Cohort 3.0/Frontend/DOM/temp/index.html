@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOM Explorer - Task Manager</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body data-theme="light">
+
+  <header class="header">
+    <div>
+      <p class="eyebrow">DOM Explorer</p>
+      <h1>Task Manager</h1>
+      <p class="subtitle">Manage tasks using Vanilla JavaScript</p>
+    </div>
+
+    <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+  </header>
+
+  <main class="container">
+
+    <!-- Task creation section -->
+    <section class="panel">
+      <h2>Create a Task</h2>
+
+      <form id="taskForm" class="task-form">
+        <input
+          type="text"
+          id="taskInput"
+          value=""
+          placeholder="Enter your task..."
+          autocomplete="off"
+          required
+        />
+
+        <select id="categoryInput">
+          <option value="Personal">Personal</option>
+          <option value="Study">Study</option>
+          <option value="Work">Work</option>
+          <option value="Health">Health</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <button type="submit" class="add-btn">+ Add Task</button>
+      </form>
+
+      <p class="attribute-demo">
+        Open browser console to see:
+        <code>input.value</code> vs
+        <code>input.getAttribute("value")</code>
+      </p>
+    </section>
+
+    <!-- Search / filter / counter -->
+    <section class="panel controls-panel">
+      <div class="controls">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search tasks..."
+        />
+
+        <select id="filterCategory">
+          <option value="All">All Categories</option>
+          <option value="Personal">Personal</option>
+          <option value="Study">Study</option>
+          <option value="Work">Work</option>
+          <option value="Health">Health</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <button id="clearAllBtn" class="clear-btn">Clear All</button>
+      </div>
+
+      <div class="task-stats">
+        <div class="stat-card">
+          <span>Total</span>
+          <strong id="totalCount">0</strong>
+        </div>
+
+        <div class="stat-card completed-stat">
+          <span>Completed</span>
+          <strong id="completedCount">0</strong>
+        </div>
+
+        <div class="stat-card pending-stat">
+          <span>Pending</span>
+          <strong id="pendingCount">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Task list -->
+    <section class="panel">
+      <div class="section-heading">
+        <h2>Your Tasks</h2>
+        <p id="emptyMessage">No tasks yet. Add your first task.</p>
+      </div>
+
+      <div id="taskList" class="task-list"></div>
+    </section>
+
+    <!-- Browser rendering pipeline -->
+    <section class="panel pipeline-section">
+      <h2>Browser Rendering Pipeline</h2>
+      <p class="pipeline-intro">
+        Browser converts your HTML and CSS into pixels visible on the screen.
+      </p>
+
+      <div class="pipeline">
+
+        <div class="pipeline-column">
+          <div class="pipeline-box">HTML</div>
+          <div class="arrow">↓</div>
+          <div class="pipeline-box">Parsing</div>
+          <div class="arrow">↓</div>
+          <div class="pipeline-box">Tokenization</div>
+          <div class="arrow">↓</div>
+          <div class="pipeline-box">DOM Tree</div>
+        </div>
+
+        <div class="pipeline-column">
+          <div class="pipeline-box">CSS</div>
+          <div class="arrow">↓</div>
+          <div class="pipeline-box">CSSOM Tree</div>
+        </div>
+
+        <div class="pipeline-column render-column">
+          <div class="pipeline-box final-box">DOM Tree + CSSOM Tree</div>
+          <div class="arrow">↓</div>
+          <div class="pipeline-box final-box">Render Tree</div>
+        </div>
+
+      </div>
+
+      <div class="pipeline-explanation">
+        <div>
+          <h3>Tokenization</h3>
+          <p>Browser breaks HTML and CSS into small meaningful pieces called tokens.</p>
+        </div>
+
+        <div>
+          <h3>Parsing</h3>
+          <p>Browser reads tokens and understands their structure.</p>
+        </div>
+
+        <div>
+          <h3>DOM Tree</h3>
+          <p>A tree-like representation of HTML elements.</p>
+        </div>
+
+        <div>
+          <h3>CSSOM Tree</h3>
+          <p>A tree-like representation of CSS rules and styles.</p>
+        </div>
+
+        <div>
+          <h3>Render Tree</h3>
+          <p>Combination of visible DOM elements and their final styles.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Event propagation demo -->
+    <section class="panel">
+      <h2>Event Propagation Demo</h2>
+      <p>
+        Click the child button and open the browser console.
+        You will see capturing and bubbling order.
+      </p>
+
+      <div id="grandparent" class="grandparent">
+        Grandparent
+
+        <div id="parent" class="parent">
+          Parent
+
+          <button id="childButton" class="child-button">
+            Child Button
+          </button>
+        </div>
+      </div>
+
+      <p class="console-note">
+        Expected console order:
+        Grandparent → Parent → Child during capturing,
+        then Child → Parent → Grandparent during bubbling.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
